@@ -1,0 +1,124 @@
+build a minimal supabase implementation which collectors workouts from users, stores them within an SQL database which allows for users to pull their own data to view on another device and query within it. 
+Additionally it needs to allow us to query the database of all user data for usage statistics. include a README explaining your decisions and what you'd change as the userbase scales. Assume a workout is roughly 45 minutes, 
+all users do an average of 1 workout a day and there are roughly 1000 users. 
+
+Attached are 3 sample workouts you can use as a starting point. 
+
+Feel free to ask if you need anything explained or supporting code. 
+
+given structures, from flutter:
+overall workout:
+class Workout {
+  //Sensor data logs
+  static const int _chanPerBand = 2;
+  //temp for the example problem
+
+  static const int analytes = 4;
+  //temp for the example problem
+
+  //List is sorted as: Location, channel, datapoints
+  List<List<List<message0>>> dat0 = List.generate(
+    locations,
+    (_) => List.generate(_chanPerBand, (_) => <message0>[]),
+  );
+
+  //List is sorted as: Location, datapoints
+  List<List<message1>> dat1 =
+      List.generate(locations, (_) => <message1>[]);
+
+  //List is sorted as: Location, analyte, datapoints
+  List<List<List<message2>>> dat2 = List.generate(
+    locations,
+    (_) => List.generate(analytes, (_) => <message2>[]),
+  );
+
+  int? id;
+
+  int? finalScore;
+
+  DateTime date = DateTime.now();
+
+  DateTime? end;
+
+  List<BandLocations> activeBands = [];
+
+  int get sampleCount {
+    var n = 0;
+    for (final band in dat0) {
+      for (final chan in band) {
+        n += chan.length;
+      }
+    }
+    for (final band in dat1) {
+      n += band.length;
+    }
+    for (final band in dat2) {
+      for (final analyte in band) {
+        n += analyte.length;
+      }
+    }
+    return n;
+  }
+}
+
+message 0:
+class message0 {
+  final int chan;
+  final double quantity0;
+  final double quantity1;
+  final double quantity2;
+  final int nSamples;
+  final int nFrames;
+  final int endMs; // device uptime
+  final BandLocations loc;
+
+  /// True when the firmware set any flag bit on this burst.
+  final bool flag;
+
+  /// Firmware error code; 0 when the burst is clean.
+  final int err;
+
+  message0({
+    required this.chan,
+    required this.quantity0,
+    required this.quantity1,
+    required this.quantity2,
+    required this.nSamples,
+    required this.nFrames,
+    required this.endMs,
+    required this.loc,
+    required this.flag,
+    required this.err,
+  });
+}
+
+message1:
+class message1{
+  final double? quantity0, quantity1;
+  final bool hasError;
+  int tOffsetMs; //ms since workout started
+  BandLocations loc;
+  int? errCode;
+  BeatMessage({this.quantity0, this.quantity1, required this.loc, required this.hasError, this.errCode, this.tOffsetMs=0});
+
+}
+
+class message2{
+  List<double> quantity0;
+  List<double> quantity1;
+  List<double> quantity2;
+  List<double> quantity3;
+  List<double> quantity4;
+
+  int analyte;
+  BandLocations loc;
+  int tOffsetMs = 0; //ms since workout started
+
+  bool hasError;
+  int? errCode;
+
+  message2(this.quantity0, this.quantity1, this.quantity2, this.quantity3, this.quantity4, this.analyte, this.loc, this.hasError, this.errCode);
+}
+
+BandLocations is an enumerator from 0 to 7
+

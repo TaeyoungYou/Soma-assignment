@@ -7,13 +7,22 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test:connection": "node --env-file .env --import tsx src/test/connection.ts"
+    "test": "node --env-file=.env ./node_modules/vitest/vitest.mjs run",
+    "gen:types": "npx supabase gen types typescript --project-id uoxtcdhxekibnsqdfkic > src/types/database.ts",
+    "test:connection": "node --env-file .env --import tsx src/test/01-connection.ts",
+    "test:auth": "node --env-file .env --import tsx src/test/02-auth.ts",
+    "test:workout": "node --env-file .env --import tsx src/test/03-workout.ts",
+    "test:upload-small-sample": "node --env-file .env --import tsx src/test/04-upload_sample.ts",
+    "test:statistics": "node --env-file .env --import tsx src/test/05-statistics.ts",
+    "test:all-samples": "node --env-file .env --import tsx src/test/06-upload-all-samples.ts",
+    "test:read-workout": "node --env-file .env --import tsx src/test/07-read-workout.ts"
   },
   "devDependencies": {
     "@types/node": "^26.6.2",
     "tsx": "^4.23.15",
     "typescript": "~6.0.2",
-    "vite": "^8.3.0"
+    "vite": "^8.3.0",
+    "vitest": "^5.0.1"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0"
